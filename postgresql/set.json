@@ -1,0 +1,76 @@
+{
+    "apiVersion": "apps/v1beta1",
+    "kind": "StatefulSet",
+    "metadata": {
+        "name": "pgset"
+    },
+    "spec": {
+        "serviceName": "pgset",
+        "replicas": 2,
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "pgset",
+                    "name": "pgset-replica"
+                }
+            },
+            "spec": {
+                "serviceAccount": "pgset-sa",
+
+                "containers": [{
+                    "name": "pgset",
+                    "image": "crunchydata/crunchy-postgres:$CCP_IMAGE_TAG",
+                    "ports": [{
+                        "containerPort": 5432,
+                        "name": "postgres"
+                    }],
+                    "env": [{
+                        "name": "PG_MASTER_USER",
+                        "value": "$PG_PRIMARY_USER"
+                    }, {
+                        "name": "PG_PRIMARY_USER",
+                        "value": "$PG_PRIMARY_USER"
+                    }, {
+                        "name": "PGHOST",
+                        "value": "/tmp"
+                    }, {
+                        "name": "PG_MODE",
+                        "value": "set"
+                    }, {
+                        "name": "PG_MASTER_HOST",
+                        "value": "pgset-master"
+                    }, {
+                        "name": "PG_MASTER_PORT",
+                        "value": "5432"
+                    }, {
+                        "name": "PG_MASTER_PASSWORD",
+                        "value": "$PG_MASTER_PASSWORD"
+                    }, {
+                        "name": "PG_USER",
+                        "value": "$PG_USER"
+                    }, {
+                        "name": "PG_PASSWORD",
+                        "value": "$PG_PASSWORD"
+                    }, {
+                        "name": "PG_DATABASE",
+                        "value": "$DATABASE"
+                    }, {
+                        "name": "PG_ROOT_PASSWORD",
+                        "value": "$PG_ROOT_PASSWORD"
+                    }],
+                    "volumeMounts": [{
+                        "name": "pgdata",
+                        "mountPath": "/pgdata",
+                        "readOnly": false
+                    }]
+                }],
+                "volumes": [{
+                    "name": "pgdata",
+                    "persistentVolumeClaim": {
+                        "claimName": "pgset-pvc"
+                    }
+                }]
+            }
+        }
+    }
+}

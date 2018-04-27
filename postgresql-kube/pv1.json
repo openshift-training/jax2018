@@ -1,0 +1,21 @@
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "labels": {
+            "app": "pgset"
+        },
+        "name": "pv1"
+    },
+    "spec": {
+        "capacity": {
+            "storage": "200Gi"
+        },
+        "accessModes": ["ReadWriteMany"],
+        "nfs": {
+            "path": "$PV_PATH",
+            "server": "$NFS_HOST_NAME"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}
